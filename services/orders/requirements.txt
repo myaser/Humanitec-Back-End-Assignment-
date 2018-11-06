@@ -1,0 +1,10 @@
+coverage==4.5.1
+Flask==1.0.2
+Flask-Cors==3.0.6
+flask-restplus==0.12.1
+ipython==7.1.1
+flask-jwt-simple[asymmetric_crypto]==0.0.3
+flask-env==2.0.0
+flask-testing==0.7.1
+gunicorn==19.9.0
+flake8===3.4.1

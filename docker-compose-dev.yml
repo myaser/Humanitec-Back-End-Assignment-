@@ -1,0 +1,66 @@
+version: '3.3'
+
+services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    build: ./services/reverse_proxy
+    restart: always
+    ports:
+    - 80:80
+    depends_on:
+    - swagger
+    - products
+    - orders
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    env_file:
+    - services/swagger-ui/swagger_config.env
+    expose:
+    - 8080
+
+  products:
+    container_name: products
+    build:
+      context: ./services/products
+      dockerfile: Dockerfile
+    volumes:
+    - './services/products:/usr/src/app'
+    - security_keys:/keys
+    expose:
+    - 5000
+    environment:
+    - APP_SETTINGS=app.config.DevelopmentConfig
+    - JWT_HEADER_NAME=Authorization
+    - JWT_HEADER_TYPE=Bearer
+    - JWT_ALGORITHM=RS256
+    - FLASK_APP=manage.py
+    - FLASK_DEBUG=true
+    command: "flask run -h 0.0.0.0"
+
+  orders:
+    container_name: orders
+    build:
+      context: ./services/orders
+      dockerfile: Dockerfile
+    volumes:
+    - './services/orders:/usr/src/app'
+    - security_keys:/keys
+    expose:
+    - 5000
+    environment:
+    - APP_SETTINGS=app.config.DevelopmentConfig
+    - JWT_HEADER_NAME=Authorization
+    - JWT_HEADER_TYPE=Bearer
+    - JWT_ALGORITHM=RS256
+    - FLASK_APP=manage.py
+    - FLASK_DEBUG=true
+    command: "flask run -h 0.0.0.0"
+
+
+volumes:
+  security_keys:
+    driver: local
+    driver_opts:
+      device: $PWD/test_security_keys
+      o: bind
