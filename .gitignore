@@ -159,3 +159,6 @@ venv.bak/
 .mypy_cache/
 .idea/
 !swagger_config.env
+
+db_data/
+!.gitkeep

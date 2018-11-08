@@ -1,11 +1,4 @@
-import unittest
-
 import coverage
-from flask import cli
-from flask_jwt_simple import create_jwt
-
-from app import create_app
-
 COV = coverage.coverage(
     branch=True,
     source='.',
@@ -14,9 +7,16 @@ COV = coverage.coverage(
         'app/tests/*',
         'app/config.py',
         'app/__init__.py'
-    ]
+    ],
 )
 COV.start()
+
+import unittest
+
+from flask import cli
+from flask_jwt_simple import create_jwt
+
+from app import create_app
 
 app = create_app()
 

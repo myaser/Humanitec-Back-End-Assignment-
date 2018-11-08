@@ -8,3 +8,5 @@ flask-env==2.0.0
 flask-testing==0.7.1
 gunicorn==19.9.0
 flake8===3.4.1
+requests==2.20.0
+responses==0.10.2

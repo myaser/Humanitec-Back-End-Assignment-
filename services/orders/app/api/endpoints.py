@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app import rest_api
 from app.api.parsers import authentication_parser
-from app.api.serializers import order
+from app.api.serializers import order, quantity
 from app.repositories import OrderRepository
 
 
@@ -17,19 +17,19 @@ class OrderCollection(Resource):
         """
         Returns list of orders.
         """
-        categories = OrderRepository.list_()
-        return categories
+        orders = OrderRepository.list_()
+        return orders
 
     @rest_api.response(201, 'Order successfully created.')
-    @rest_api.expect(order)
+    @rest_api.response(409, 'data integrity error.')
+    @rest_api.expect(order, validate=True)
     @jwt_required
     def post(self):
         """
         Creates a new order.
         """
         data = request.json
-        OrderRepository.create(data)
-        return None, 201
+        return OrderRepository.create(data), 201
 
 
 @rest_api.response(404, 'Order not found.')
@@ -44,7 +44,7 @@ class OrderItem(Resource):
         """
         return OrderRepository.retrieve(uuid)
 
-    @rest_api.expect(order)
+    @rest_api.expect(quantity, validate=True)
     @rest_api.response(204, 'Order successfully updated.')
     @jwt_required
     def patch(self, uuid):

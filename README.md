@@ -44,3 +44,6 @@ Related Repos:
 
 ---
 ## Solution
+TODO:
+* limitations: tinyrecord do not support concurrency
+* separate test database from production database

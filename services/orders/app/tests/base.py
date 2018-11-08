@@ -1,6 +1,8 @@
+from flask_jwt_simple import create_jwt
 from flask_testing import TestCase
 
 from app import create_app
+from app.gateways import get_default_gateway
 
 
 class BaseTestCase(TestCase):
@@ -10,7 +12,7 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
-        pass
+        self.test_jwt_token = create_jwt('username')
 
     def tearDown(self):
-        pass
+        get_default_gateway().table.purge()
