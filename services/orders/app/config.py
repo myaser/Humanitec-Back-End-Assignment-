@@ -16,8 +16,8 @@ class BaseConfig(metaclass=MetaFlaskEnv):
     RESTPLUS_MASK_SWAGGER = False
     PRODUCTS_SERVICE_URL = 'http://localhost/products'
 
-    DATABASE_FILE='db_data/orders.json'
-    DATABASE_TABLE_NAME='orders'
+    DATABASE_FILE = 'db_data/orders.json'
+    DATABASE_TABLE_NAME = 'orders'
 
 
 class DevelopmentConfig(BaseConfig):
@@ -28,7 +28,7 @@ class DevelopmentConfig(BaseConfig):
 class TestingConfig(BaseConfig):
     """Testing configuration"""
     TESTING = True
-    DATABASE_FILE='db_data/test_orders.json'
+    DATABASE_FILE = 'db_data/test_orders.json'
 
 
 class StagingConfig(BaseConfig):

@@ -23,9 +23,8 @@ class OrderRepository(object):
 
     @staticmethod
     def update(uuid, data, gateway: AbstractJSONStorageGateway = None):
-        # ignore other parameters in payload
         gateway = gateway if gateway is not None else get_default_gateway()
-        return gateway.update(uuid=uuid, data={'quantity': data.pop('quantity')})
+        return gateway.update(uuid=uuid, data=data)
 
     @staticmethod
     def delete(uuid, gateway: AbstractJSONStorageGateway = None):
@@ -33,6 +32,8 @@ class OrderRepository(object):
         return gateway.delete(uuid=uuid)
 
     @staticmethod
-    def list_(gateway: AbstractJSONStorageGateway = None):
+    def list_(gateway: AbstractJSONStorageGateway = None, conditions: dict = None):
         gateway = gateway if gateway is not None else get_default_gateway()
+        if conditions:
+            return gateway.search(conditions=conditions)
         return gateway.list_()

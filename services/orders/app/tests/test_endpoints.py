@@ -160,6 +160,18 @@ class TestAPI(BaseTestCase):
         )
         self.assert_status(response, 404)
 
+        # test update order uuid
+        response = self.client.patch(
+            f'/orders/{order["uuid"]}',
+            content_type='application/json',
+            headers={'Authorization': f'Bearer {self.test_jwt_token}'},
+            data=json.dumps({'uuid': '42f616dd-ea9f-41c0-a4d2-389be68b2a99', 'quantity': 100})
+        )
+        self.assert_status(response, 204)
+        self.assertEqual(OrderRepository.retrieve(order["uuid"])['quantity'], 100)
+        with self.assertRaises(NoResultFound):
+            OrderRepository.retrieve("42f616dd-ea9f-41c0-a4d2-389be68b2a99")
+
     @responses.activate
     def test_delete_item(self):
         responses.add(responses.GET, self.app.config['PRODUCTS_SERVICE_URL'] + '/415781d4-b14f-4995-85cb-b681571801c2/',
@@ -173,7 +185,6 @@ class TestAPI(BaseTestCase):
             f'/orders/{order["uuid"]}',
             content_type='application/json',
             headers={'Authorization': f'Bearer {self.test_jwt_token}'},
-            data=json.dumps({'quantity': 2})
         )
         self.assert_status(response, 204)
         with self.assertRaises(NoResultFound):
@@ -184,6 +195,21 @@ class TestAPI(BaseTestCase):
             f'/orders/42f616dd-ea9f-41c0-a4d2-389be68b2a99',
             content_type='application/json',
             headers={'Authorization': f'Bearer {self.test_jwt_token}'},
-            data=json.dumps({'quantity': 2})
         )
         self.assert_status(response, 404)
+
+    @responses.activate
+    def test_search_by_product_uuid(self):
+        responses.add(responses.GET, self.app.config['PRODUCTS_SERVICE_URL'] + '/415781d4-b14f-4995-85cb-b681571801c2/',
+                      json={'uuid': '415781d4-b14f-4995-85cb-b681571801c2', 'name': 'existing_product', 'price': 10},
+                      status=200)
+        OrderRepository.create({'quantity': '1', 'product_uuid': '415781d4-b14f-4995-85cb-b681571801c2'})
+        response = self.client.get(
+            '/orders/?product_uuid=415781d4-b14f-4995-85cb-b681571801c2',
+            content_type='application/json',
+            headers={'Authorization': f'Bearer {self.test_jwt_token}'},
+        )
+        self.assertStatus(response, 200)
+        self.assertTrue(response.is_json)
+        self.assertEqual(len(response.get_json()), 1)
+        self.assertEqual(response.get_json()[0]['product_uuid'], '415781d4-b14f-4995-85cb-b681571801c2')

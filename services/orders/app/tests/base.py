@@ -15,4 +15,4 @@ class BaseTestCase(TestCase):
         self.test_jwt_token = create_jwt('username')
 
     def tearDown(self):
-        get_default_gateway().table.purge()
+        get_default_gateway().purge()

@@ -1,5 +1,4 @@
 from abc import abstractmethod, ABCMeta
-from functools import reduce
 from uuid import uuid4
 
 from flask import current_app
@@ -32,7 +31,7 @@ class AbstractJSONStorageGateway(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def search(self, conditions: dict):
+    def search(self):
         pass
 
     @abstractmethod
@@ -82,11 +81,11 @@ class TinyDBGateway(AbstractJSONStorageGateway):
             else:
                 raise NoResultFound('object do not exist')
 
+    def search(self):
+        raise NotImplementedError()
+
     def purge(self):
         self.table.purge()
-
-    def search(self, conditions: dict):
-        return self.table.search(reduce(lambda x, y: x & y, [where(k) == v for k, v in conditions.items()]))
 
 
 def get_default_gateway():

@@ -22,4 +22,3 @@ class IntegrityError(RootException):
 
 class StorageError(RootException):
     status_code = 500
-    pass

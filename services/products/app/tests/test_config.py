@@ -27,7 +27,7 @@ class TestTestingConfig(TestCase):
         return app
 
     def test_app_is_testing(self):
-        self.assertTrue(self.app.config['DEBUG'])
+        self.assertFalse(self.app.config['DEBUG'])
         self.assertTrue(self.app.config['TESTING'])
 
 

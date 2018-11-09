@@ -14,8 +14,10 @@ class BaseConfig(metaclass=MetaFlaskEnv):
     JWT_PRIVATE_KEY = None
     JWT_DECODE_AUDIENCE = None
     RESTPLUS_MASK_SWAGGER = False
+    ORDERS_SERVICE_URL = 'http://localhost/orders'
 
-    # USERS_SERVICE_URL = os.environ.get('USERS_SERVICE_URL')
+    DATABASE_FILE = 'db_data/products.json'
+    DATABASE_TABLE_NAME = 'products'
 
 
 class DevelopmentConfig(BaseConfig):
@@ -25,8 +27,8 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     """Testing configuration"""
-    DEBUG = True
     TESTING = True
+    DATABASE_FILE = 'db_data/test_products.json'
 
 
 class StagingConfig(BaseConfig):

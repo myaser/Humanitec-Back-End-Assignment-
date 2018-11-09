@@ -1,10 +1,10 @@
 from flask import request
 from flask_jwt_simple import jwt_required
-from flask_restplus import Resource
+from flask_restplus import Resource, marshal
 
 from app import rest_api
 from app.api.parsers import authentication_parser
-from app.api.serializers import product
+from app.api.serializers import product, product_update
 from app.repositories import ProductRepository
 
 
@@ -17,19 +17,20 @@ class ProductCollection(Resource):
         """
         Returns list of products.
         """
-        categories = ProductRepository.list_()
-        return categories
+        products = ProductRepository.list_()
+        return products
 
     @rest_api.response(201, 'Product successfully created.')
-    @rest_api.expect(product)
+    @rest_api.response(409, 'data integrity error.')
+    @rest_api.expect(product, validate=True)
     @jwt_required
     def post(self):
         """
         Creates a new product.
         """
-        data = request.json
-        ProductRepository.create(data)
-        return None, 201
+        # data = request.json
+        data = marshal(request.json, product, skip_none=True)
+        return ProductRepository.create(data), 201
 
 
 @rest_api.response(404, 'Product not found.')
@@ -44,17 +45,18 @@ class ProductItem(Resource):
         """
         return ProductRepository.retrieve(uuid)
 
-    @rest_api.expect(product)
+    @rest_api.expect(product_update, validate=True)
     @rest_api.response(204, 'Product successfully updated.')
     @jwt_required
     def patch(self, uuid):
         """
         Updates a product.
-        Use this method to change the name of a Product.
+        Use this method to change the name of an Product.
         * Specify the UUID of the Product to modify in the request URL path.
         """
-        data = request.json
-        ProductRepository.update(uuid, data)
+        data = marshal(request.json, product_update, skip_none=True)
+        if data:
+            ProductRepository.update(uuid, data)
         return None, 204
 
     @rest_api.response(204, 'Product successfully deleted.')
